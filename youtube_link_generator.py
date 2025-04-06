@@ -2,7 +2,7 @@ import os
 import re
 import urllib.parse
 
-TAILWIND_CSS_CDN = "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+TAILWIND_CSS_CDN = "https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"
 
 def format_search_query(track_line):
     """Converts a track line into a YouTube search URL."""
@@ -19,7 +19,7 @@ def generate_html_from_tracks(track_lines, output_file="youtube_links.html"):
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YouTube Links</title>
-    <link href="{TAILWIND_CSS_CDN}" rel="stylesheet">
+    <script src="{TAILWIND_CSS_CDN}"></script>
 </head>
 <body class="bg-gray-900 text-white p-6">
     <div class="max-w-3xl mx-auto">
