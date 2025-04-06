@@ -1,6 +1,6 @@
 A simple tool to convert a Spotify playlist into a YouTube playlist. It also will create a simple TailwindCSS styled HTML page with a YouTube search link for each track.
 
-Requirements:
+## Requirements:
 - A Spotify Premium account to create an app and access the Spotify WebAPI
 - Goolge account to create an app and access the YouTube Data API v3
 
@@ -33,5 +33,7 @@ Requirements:
   1. Run the script to grant your apps access to your Spotify and Google accounts.
   1. Answer the prompts according to what you want to do.
 
-    
+# Known bugs
+Since this tool works by adding the first video from the YouTube search of format `Track Title - Artist Name (Album: Album Name)`, mistakes are bound to happen. One problem that seems to be pretty common is that "Full Album" videos get added when a song is also an album name.
 
+Example: `Colour Green - Sibylle Baier (Album: Colour Green)` adds the video [Sibylle Baier - Colour Green (Full Album)](https://www.youtube.com/watch?v=8xVw7BEnkEI)
