@@ -11,7 +11,7 @@ Requirements:
    ```
 1. Create a Spotify Developer App at Spotify Developer Dashboard
    1. [Create developer app on the dashboard](https://developer.spotify.com/dashboard).
-   1. Add a Redirect URI `http://localhost:8888/callback` in the app settings.
+   1. Add a Redirect URI `http://127.0.0.1:8888/callback` in the app settings.
    1. Copy your Client ID and Client Secret and put them in a `.env` file like so:
 
       `spotimy/.env`:    
