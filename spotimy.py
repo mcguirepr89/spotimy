@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
 from urllib.parse import urlparse, parse_qs
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from youtube_playlist_adder import add_tracks_to_youtube_playlist  # Import new script
 
 load_dotenv()
 
@@ -106,6 +107,12 @@ def get_playlist_tracks(sp, playlist_id):
     create_html = input("\nDo you want to generate a YouTube-linked HTML file? (y/n): ").strip().lower()
     if create_html == "y":
         generate_html_from_tracks(track_lines)
+
+    # Ask if user wants to create a YouTube playlist from the tracks
+    create_youtube_playlist = input("\nDo you want to add these tracks to a YouTube playlist? (y/n): ").strip().lower()
+    if create_youtube_playlist == "y":
+        playlist_id = input("Enter your YouTube playlist ID: ").strip()
+        add_tracks_to_youtube_playlist(track_lines, playlist_id)
 
 # Search for a track
 def search_track(sp, query):
