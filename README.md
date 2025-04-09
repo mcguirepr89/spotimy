@@ -22,7 +22,7 @@ A simple tool to convert a Spotify playlist into a YouTube playlist. It also wil
 1. Generate a YouTube Data API v3 key:
    1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
    1. Enable the YouTube Data API v3.
-   1. Generate OAuth 2.0 credentials with https://www.googleapis.com/auth/youtube.force-ssl scope.
+   1. Generate OAuth 2.0 credentials with `https://www.googleapis.com/auth/youtube.force-ssl` scope.
    1. Download your client credentials `JSON` file and rename it `client_secrets.json`
   
 1. Install dependencies in a virtual environment in the `spotimy` directory:
