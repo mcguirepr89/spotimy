@@ -34,7 +34,7 @@ A simple tool to convert a Spotify playlist into a YouTube playlist. It also wil
   1. Run the script to grant your apps access to your Spotify and Google accounts.
   1. Answer the prompts according to what you want to do.
   #### To add tracks from a file to an existing or new Spotify playlist
-  1. See the Hints section below on how to generate a file containing a list of Spotify track IDs
+  1. See the [Hints section](https://github.com/mcguirepr89/spotimy?tab=readme-ov-file#hints) below on how to generate a file containing a list of Spotify track IDs
   1. Provide the file as a commandline argument, e.g., `python3 spotimy.py listoftrackids.txt`
 
 # Known bugs and limitations
