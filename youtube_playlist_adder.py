@@ -40,6 +40,62 @@ def search_first_video(youtube, query):
         return response["items"][0]["id"]["videoId"]
     return None
 
+def list_user_playlists(youtube):
+    """Fetches and returns the user's existing playlists."""
+    playlists = []
+    request = youtube.playlists().list(
+        part="snippet,status",
+        mine=True,
+        maxResults=50
+    )
+    while request:
+        response = request.execute()
+        playlists.extend(response.get("items", []))
+        request = youtube.playlists().list_next(request, response)
+    return playlists
+
+def create_youtube_playlist(youtube, title, privacy_status="private"):
+    """Creates a new YouTube playlist and returns its ID."""
+    request = youtube.playlists().insert(
+        part="snippet,status",
+        body={
+            "snippet": {"title": title, "description": "Created via Spotimy"},
+            "status": {"privacyStatus": privacy_status}
+        }
+    )
+    response = request.execute()
+    print(f"✅ Created playlist: {title}")
+    return response["id"]
+
+def prompt_user_for_playlist(youtube):
+    playlists = list_user_playlists(youtube)
+
+    if playlists:
+        print("\n📃 Existing YouTube Playlists:")
+        for idx, p in enumerate(playlists, start=1):
+            title = p.get("snippet", {}).get("title", "Untitled")
+            status = p.get("status", {}).get("privacyStatus", "unknown")
+            print(f"{idx}. {title} ({status})")
+            print(f"{len(playlists)+1}. ➕ Create a new playlist")
+
+
+    while True:
+        try:
+            choice = int(input("\nSelect a playlist or choose to create a new one: "))
+            if 1 <= choice <= len(playlists):
+                return playlists[choice - 1]["id"]
+            elif choice == len(playlists) + 1:
+                name = input("Enter new playlist name: ").strip()
+                privacy = input("Visibility (public/unlisted/private): ").strip().lower()
+                if privacy not in ["public", "unlisted", "private"]:
+                    print("Invalid visibility, defaulting to 'private'.")
+                    privacy = "private"
+                return create_youtube_playlist(youtube, name, privacy)
+            else:
+                print("Invalid choice, try again.")
+        except ValueError:
+            print("Please enter a valid number.")
+
 def add_video_to_playlist(youtube, playlist_id, video_id):
     request = youtube.playlistItems().insert(
         part="snippet",
@@ -59,8 +115,12 @@ def add_video_to_playlist(youtube, playlist_id, video_id):
 def clean_query(track_line):
     return re.sub(r'^\d+\.\s*', '', track_line)
 
-def add_tracks_to_youtube_playlist(track_lines, playlist_id):
+def add_tracks_to_youtube_playlist(track_lines, playlist_id=None):
     youtube = get_authenticated_service()
+
+    if not playlist_id:
+        playlist_id = prompt_user_for_playlist(youtube)
+
     for track in track_lines:
         query = clean_query(track)
         video_id = search_first_video(youtube, query)
@@ -68,3 +128,5 @@ def add_tracks_to_youtube_playlist(track_lines, playlist_id):
             add_video_to_playlist(youtube, playlist_id, video_id)
         else:
             print(f"❌ No video found for: {query}")
+
+    return playlist_id

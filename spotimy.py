@@ -82,9 +82,8 @@ def main():
     # Ask if user wants to create a YouTube playlist
     youtube_playlist_id = None
     if input("\nDo you want to create a YouTube playlist from these tracks? (y/n): ").strip().lower() == "y":
-        youtube_playlist_id = input("Enter your YouTube playlist ID: ").strip()
         try:
-            add_tracks_to_youtube_playlist(track_lines, youtube_playlist_id)
+            youtube_playlist_id = add_tracks_to_youtube_playlist(track_lines, youtube_playlist_id)
         except Exception as e:
             print(f"\n⚠️ Failed to generate YouTube playlist: {e}")
             print("Continuing to generate YouTube-linked HTML file...\n")
