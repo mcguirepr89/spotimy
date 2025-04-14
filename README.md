@@ -30,8 +30,12 @@ A simple tool to convert a Spotify playlist into a YouTube playlist. It also wil
    1. `pip install -U pip && pip install -r requirements.txt`
 
 # Usage
+  #### To simply convert a Spotify playlist to a YouTube Playlist
   1. Run the script to grant your apps access to your Spotify and Google accounts.
   1. Answer the prompts according to what you want to do.
+  #### To add tracks from a file to an existing or new Spotify playlist
+  1. See the Hints section below on how to generate a file containing a list of Spotify track IDs
+  1. Provide the file as a commandline argument, e.g., `python3 spotimy.py listoftrackids.txt`
 
 # Known bugs and limitations
 ### Bugs
@@ -45,3 +49,24 @@ The API requests are limited. At the time of writing, (April 14th, 2025), I've o
 # ToDo
 I will likely make the following changes:
 1. Allow the user to append tracks from a Spotify playlist to an existing YouTube playlist to address the daily rate limit. For example, if your Spotify playlist contains 80 songs, on Monday you could add 68 of those tracks to your YouTube playlist, and then on Tuesday you could append the remaining 12 tracks to the YouTube playlist to complete the _conversion_.
+
+# Hints
+Spotify deprecated being able to get the tracks from their currated playlists. This little javascript code snippet can be used to extract all of the `href` targets from the `<a>` tags when you open those playlist pages in your browser, zoom ALLLLL the way out so that every track is loaded and visible, and then dumping those into a file.
+
+```
+const trackLinks = Array.from(document.querySelectorAll('a'))
+                        .map(a => a.getAttribute('href'))
+                        .filter(href => href && href.includes('track'))
+                        .map(href => href.split('/track/')[1]);
+
+console.log(trackLinks.join('\n'));
+```
+
+Example workflow using Chrome:
+1. Go to the playlist in the web browser.
+1. Press `Ctrl` + `Shift` + `I` to enter the browser's web inspector.
+1. Using the element explorer, highlight the `<div`> element that contains the playlist track listing and right click to "cut" it into your clipboard.
+1. Delete the entire `<body>` element
+1. Append (paste) the `<div>` from your clipboard.
+1. Go to the web inspector's "Console" to paste the javascript snippet above.
+1. Copy and paste the results into a text file.
