@@ -33,7 +33,15 @@ A simple tool to convert a Spotify playlist into a YouTube playlist. It also wil
   1. Run the script to grant your apps access to your Spotify and Google accounts.
   1. Answer the prompts according to what you want to do.
 
-# Known bugs
+# Known bugs and limitations
+### Bugs
 Since this tool works by adding the first video from the YouTube search of format `Track Title - Artist Name (Album: Album Name)`, mistakes are bound to happen. One problem that seems to be pretty common is that "Full Album" videos get added when a song is also an album name.
 
 Example: `Colour Green - Sibylle Baier (Album: Colour Green)` adds the video [Sibylle Baier - Colour Green (Full Album)](https://www.youtube.com/watch?v=8xVw7BEnkEI)
+
+### Limitations
+The API requests are limited. At the time of writing, (April 14th, 2025), I've only been able to convert 68 Spotify tracks into YouTube playlist items before hitting the API daily rate limit.
+
+# ToDo
+I will likely make the following changes:
+1. Allow the user to append tracks from a Spotify playlist to an existing YouTube playlist to address the daily rate limit. For example, if your Spotify playlist contains 80 songs, on Monday you could add 68 of those tracks to your YouTube playlist, and then on Tuesday you could append the remaining 12 tracks to the YouTube playlist to complete the _conversion_.
