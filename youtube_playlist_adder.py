@@ -76,7 +76,7 @@ def prompt_user_for_playlist(youtube):
             title = p.get("snippet", {}).get("title", "Untitled")
             status = p.get("status", {}).get("privacyStatus", "unknown")
             print(f"{idx}. {title} ({status})")
-            print(f"{len(playlists)+1}. ➕ Create a new playlist")
+        print(f"{len(playlists)+1}. ➕ Create a new playlist")
 
 
     while True:
