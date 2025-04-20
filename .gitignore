@@ -3,5 +3,5 @@
 /venv/
 __pycache__/
 youtube_links.html
-client_secrets.json
+client_secret.json
 token.json

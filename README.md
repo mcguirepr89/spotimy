@@ -1,4 +1,4 @@
-A simple tool to convert a Spotify playlist into a YouTube playlist. It also will create a simple TailwindCSS styled HTML page with a YouTube search link for each track.
+A tool to convert a Spotify playlist into a YouTube playlist. It also will create a simple TailwindCSS styled HTML page with a YouTube search link for each track.
 
 ## Requirements:
 - A Spotify Premium account to create an app and access the Spotify WebAPI
@@ -16,8 +16,8 @@ A simple tool to convert a Spotify playlist into a YouTube playlist. It also wil
 
       `spotimy/.env`:    
       ```
-      CLIENT_ID=mylongclientid
-      CLIENT_SECRET=mylongclientsecret
+      SPOTIFY_CLIENT_ID=mylongclientid
+      SPOTIFY_CLIENT_SECRET=mylongclientsecret
       ```
 1. Generate a YouTube Data API v3 key:
    1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
