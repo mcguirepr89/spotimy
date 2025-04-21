@@ -27,7 +27,17 @@ def choose_spotify_playlist(playlists):
     for idx, (name, _) in enumerate(playlists):
         print(f"{idx + 1}: {name}")
     choice = int(input("Select a playlist by number: ")) - 1
-    return playlists[choice]
+    selected_playlist = playlists[choice]
+    playlist_name, playlist_id = selected_playlist
+    playlist_url = f"https://open.spotify.com/playlist/{playlist_id}"
+    return playlist_name, playlist_id, playlist_url
+
+#def choose_spotify_playlist(playlists):
+#    print("\nSpotify Playlists:")
+#    for idx, (name, _) in enumerate(playlists):
+#        print(f"{idx + 1}: {name}")
+#    choice = int(input("Select a playlist by number: ")) - 1
+#    return playlists[choice]
 
 def fetch_tracks_from_playlist(sp, playlist_id):
     tracks = []

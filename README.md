@@ -1,13 +1,43 @@
-A tool to convert a Spotify playlist into a YouTube playlist. It also will create a simple TailwindCSS styled HTML page with a YouTube search link for each track.
+# Spotify to YouTube Playlist Converter 🎵➡️📺
+
+A Python tool that helps you quickly convert a Spotify playlist into a YouTube playlist — and generates a beautiful, mobile-friendly HTML page with all your tracks and links.
+
+Built with **Spotipy**, **Google API**, **TailwindCSS**, and lots of love. ❤️
+
+---
+
+## Features ✨
+
+- 🔄 Convert a Spotify playlist into a YouTube playlist automatically
+- 🌐 Generate an HTML page with:
+  - Embedded YouTube playlist player
+  - Link to the original Spotify playlist
+  - Toggleable track list (show/hide)
+  - Beautiful responsive design with dark mode
+- 🌓 Dark mode support (follows system preferences)
+- 📜 Simple, clean codebase with easy customization
+- ⚡ Fast and lightweight, no server needed — just open the HTML file!
+
+---
+
+## Screenshots 📸
+
+Will add screenshots soon
+
+---
 
 ## Requirements:
 - A Spotify Premium account to create an app and access the Spotify WebAPI
 - Goolge account to create an app and access the YouTube Data API v3
 
-# Setup steps:
-1. Clone the repo:
-   ```
+---
+
+## Installation ⚙️
+
+1. Clone the repository:
+   ```bash
    git clone https://github.com/mcguirepr89/spotimy.git
+   cd spotimy
    ```
 1. Create a Spotify Developer App at Spotify Developer Dashboard
    1. [Create developer app on the dashboard](https://developer.spotify.com/dashboard).
@@ -23,19 +53,54 @@ A tool to convert a Spotify playlist into a YouTube playlist. It also will creat
    1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
    1. Enable the YouTube Data API v3.
    1. Generate OAuth 2.0 credentials with `https://www.googleapis.com/auth/youtube.force-ssl` scope.
-   1. Download your client credentials `JSON` file and rename it `client_secrets.json`
+   1. Download your client credentials `JSON` file and rename it `client_secret.json`
   
 1. Install dependencies in a virtual environment in the `spotimy` directory:
-   1. `python3 -m venv venv && source ./venv/bin/activate`
-   1. `pip install -U pip && pip install -r requirements.txt`
+   1. ```bash
+      python3 -m venv venv && source ./venv/bin/activate
+      ```
+   1. ```bash
+      pip install -U pip && pip install -r requirements.txt
+      ```
 
-# Usage
-  #### To simply convert a Spotify playlist to a YouTube Playlist
-  1. Run the script to grant your apps access to your Spotify and Google accounts.
-  1. Answer the prompts according to what you want to do.
-  #### To add tracks from a file to an existing or new Spotify playlist
-  1. See the [Hints section](https://github.com/mcguirepr89/spotimy?tab=readme-ov-file#hints) below on how to generate a file containing a list of Spotify track IDs
-  1. Provide the file as a commandline argument, e.g., `python3 spotimy.py listoftrackids.txt`
+---
+
+## Usage 🚀
+
+Run the script interactively:
+
+```bash
+python spotimy.py
+```
+
+You will be prompted to:
+- Choose a Spotify playlist
+- Optionally create a YouTube playlist or select an existing one
+- Export a mobile-friendly HTML page with embedded YouTube links
+
+You can then open the generated `youtube_links.html` in any web browser!
+
+OR resume from a previous conversion (see [Limitations](https://github.com/mcguirepr89/spotimy/blob/main/README.md#limitations) below for why this might be needed/helpful):
+```bash
+python spotimy.py --resume Spotify_playlist-to-Youtube_playlist.json
+```
+
+---
+
+## Technologies Used 🛠
+
+- [Python 3](https://www.python.org/)
+- [Spotipy](https://spotipy.readthedocs.io/en/2.22.1/)
+- [Google API Client Library for Python](https://googleapis.dev/python/google-api-core/latest/index.html)
+- [Tailwind CSS](https://tailwindcss.com/)
+
+---
+
+## License 📄
+
+This project is licensed under the MIT License.
+See the [LICENSE](LICENSE) file for details.
+
 
 # Known bugs and limitations
 ### Bugs
@@ -45,10 +110,6 @@ Example: `Colour Green - Sibylle Baier (Album: Colour Green)` adds the video [Si
 
 ### Limitations
 The API requests are limited. At the time of writing, (April 14th, 2025), I've only been able to convert 68 Spotify tracks into YouTube playlist items before hitting the API daily rate limit.
-
-# ToDo
-I will likely make the following changes:
-1. Allow the user to append tracks from a Spotify playlist to an existing YouTube playlist to address the daily rate limit. For example, if your Spotify playlist contains 80 songs, on Monday you could add 68 of those tracks to your YouTube playlist, and then on Tuesday you could append the remaining 12 tracks to the YouTube playlist to complete the _conversion_.
 
 # Hints
 Spotify deprecated being able to get the tracks from their currated playlists. This little javascript code snippet can be used to extract all of the `href` targets from the `<a>` tags when you open those playlist pages in your browser, zoom ALLLLL the way out so that every track is loaded and visible, and then dumping those into a file.

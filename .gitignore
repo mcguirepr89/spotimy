@@ -2,6 +2,5 @@
 .env
 /venv/
 __pycache__/
-youtube_links.html
-client_secret.json
-token.json
+*.json
+*.html
