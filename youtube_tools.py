@@ -133,6 +133,16 @@ class YoutubeAPI:
             else:
                 print(f"✖ Failed: {query}")
 
+    def get_youtube_playlist_name(self, playlist_id):
+        playlist = self.youtube.playlists().list(
+            part="snippet",
+            id=playlist_id
+        ).execute()
+        items = playlist.get("items", [])
+        if items:
+            return items[0]["snippet"]["title"]
+        return "YouTubePlaylist"
+
 def update_resume_file(resume_data, resume_path):
     with open(resume_path, "w") as f:
         json.dump(resume_data, f, indent=2)

@@ -21,6 +21,10 @@ def load_resume_file(resume_path):
     with open(resume_path) as f:
         return json.load(f)
 
+def sanitize_filename(name):
+    """Make filenames safe."""
+    return "".join(c if c.isalnum() or c in "-_" else "_" for c in name)
+
 def main():
     about = "Spotify to YouTube playlist converter and web page creator."
 
@@ -48,7 +52,8 @@ def main():
 
         yt_api = yt.YoutubeAPI()
         youtube_playlist_id = yt_api.choose_or_create_youtube_playlist(playlist_name)
-        youtube_playlist_name = get_youtube_playlist_name(yt_api, youtube_playlist_id)
+        youtube_playlist_name = yt_api.get_youtube_playlist_name(youtube_playlist_id)
+
 
         resume_file_name = f"{sanitize_filename(playlist_name)}-to-{sanitize_filename(youtube_playlist_name)}.json"
         resume_file = resume_file_name
@@ -85,20 +90,6 @@ def main():
         if input("\n🧹 All tracks added. Delete the resume file? (y/N): ").lower().startswith('y'):
             os.remove(resume_file)
             print(f"🗑 Deleted {resume_file}")
-
-def sanitize_filename(name):
-    """Make filenames safe."""
-    return "".join(c if c.isalnum() or c in "-_" else "_" for c in name)
-
-def get_youtube_playlist_name(yt_api, playlist_id):
-    playlist = yt_api.youtube.playlists().list(
-        part="snippet",
-        id=playlist_id
-    ).execute()
-    items = playlist.get("items", [])
-    if items:
-        return items[0]["snippet"]["title"]
-    return "YouTubePlaylist"
 
 if __name__ == "__main__":
     main()
