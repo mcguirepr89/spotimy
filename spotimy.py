@@ -4,7 +4,7 @@ import argparse
 import youtube_tools as yt
 import generate_html as gh
 from youtube_tools import update_resume_file
-from spotify_tools import authenticate_spotify, fetch_spotify_playlists, choose_spotify_playlist, fetch_tracks_from_playlist
+import spotify_tools as st
 
 def save_resume_file(tracks, playlist_name, youtube_playlist_name, resume_path, spotify_playlist_url=None):
     resume_data = {
@@ -40,11 +40,11 @@ def main():
         resume_data = load_resume_file(args.resume)
         resume_file = args.resume
     else:
-        sp = authenticate_spotify()
-        playlists = fetch_spotify_playlists(sp)
-        playlist_name, playlist_id, spotify_playlist_url = choose_spotify_playlist(playlists)
+        sp = st.SpotifyAPI()
+        playlists = sp.fetch_spotify_playlists()
+        playlist_name, playlist_id, spotify_playlist_url = sp.choose_spotify_playlist(playlists)
 
-        tracks = fetch_tracks_from_playlist(sp, playlist_id)
+        tracks = sp.fetch_tracks_from_playlist(playlist_id)
 
         yt_api = yt.YoutubeAPI()
         youtube_playlist_id = yt_api.choose_or_create_youtube_playlist(playlist_name)
