@@ -1,29 +1,11 @@
 import os
 import json
 import argparse
+
+import spotify_tools as st
 import youtube_tools as yt
 import generate_html as gh
-from youtube_tools import update_resume_file
-import spotify_tools as st
-
-def save_resume_file(tracks, playlist_name, youtube_playlist_name, resume_path, spotify_playlist_url=None):
-    resume_data = {
-        "playlist_name": playlist_name,
-        "spotify_playlist_url": spotify_playlist_url,
-        "youtube_playlist_name": youtube_playlist_name,
-        "youtube_playlist_id": None,
-        "tracks": [{"track_info": t, "added": False} for t in tracks]
-    }
-    with open(resume_path, "w") as f:
-        json.dump(resume_data, f, indent=2)
-
-def load_resume_file(resume_path):
-    with open(resume_path) as f:
-        return json.load(f)
-
-def sanitize_filename(name):
-    """Make filenames safe."""
-    return "".join(c if c.isalnum() or c in "-_" else "_" for c in name)
+import utils
 
 def main():
     about = "Spotify to YouTube playlist converter and web page creator."
@@ -41,7 +23,7 @@ def main():
             print(f"❌ Resume file {args.resume} not found.")
             return
         print(f"\n📄 Resuming from {args.resume}...")
-        resume_data = load_resume_file(args.resume)
+        resume_data = utils.load_json(args.resume)
         resume_file = args.resume
     else:
         sp = st.SpotifyAPI()
@@ -54,42 +36,37 @@ def main():
         youtube_playlist_id = yt_api.choose_or_create_youtube_playlist(playlist_name)
         youtube_playlist_name = yt_api.get_youtube_playlist_name(youtube_playlist_id)
 
+        resume_file = f"{utils.sanitize_filename(playlist_name)}-to-{utils.sanitize_filename(youtube_playlist_name)}.json"
 
-        resume_file_name = f"{sanitize_filename(playlist_name)}-to-{sanitize_filename(youtube_playlist_name)}.json"
-        resume_file = resume_file_name
+        utils.save_resume_file(tracks, playlist_name, youtube_playlist_name, resume_file, spotify_playlist_url)
 
-        save_resume_file(tracks, playlist_name, youtube_playlist_name, resume_file, spotify_playlist_url)
-
-        resume_data = load_resume_file(resume_file)
+        resume_data = utils.load_json(resume_file)
         resume_data["youtube_playlist_id"] = youtube_playlist_id
-        update_resume_file(resume_data, resume_file)
+        utils.update_resume_file(resume_data, resume_file)
 
     yt_api = yt.YoutubeAPI()
-
     youtube_playlist_id = resume_data["youtube_playlist_id"]
-
     yt_api.add_tracks_to_youtube_playlist(resume_data, youtube_playlist_id, resume_file)
 
     print("\n🎵 All tracks processed!")
 
-    all_added = all(t["added"] for t in resume_data["tracks"])
-
-    generate_html = args.generate_html
-
-    if not args.generate_html:
-        # Interactive post-process
-        if input("\n🌐 Would you like to generate the YouTube links HTML page? (y/N): ").lower().startswith('y'):
-            generate_html = True
-
-    if generate_html:
+    if should_generate_html(args):
         print("\n🌐 Generating YouTube links page...")
         gh.generate_html_with_links_and_embed(resume_data)
         print("\n✅ HTML page created!")
 
-    if all_added:
-        if input("\n🧹 All tracks added. Delete the resume file? (y/N): ").lower().startswith('y'):
+    if all(track["added"] for track in resume_data["tracks"]):
+        if confirm("\n🧹 All tracks added. Delete the resume file? (y/N): "):
             os.remove(resume_file)
             print(f"🗑 Deleted {resume_file}")
+
+def should_generate_html(args):
+    if args.generate_html:
+        return True
+    return confirm("\n🌐 Would you like to generate the YouTube links HTML page? (y/N): ")
+
+def confirm(prompt):
+    return input(prompt).strip().lower() in ["y", "yes"]
 
 if __name__ == "__main__":
     main()
