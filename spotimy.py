@@ -1,7 +1,9 @@
 import os
 import json
 import html
-from youtube_tools import YoutubeAPI, choose_or_create_youtube_playlist, add_tracks_to_youtube_playlist
+import argparse
+import youtube_tools as yt
+from youtube_tools import update_resume_file
 from spotify_tools import authenticate_spotify, fetch_spotify_playlists, choose_spotify_playlist, fetch_tracks_from_playlist
 
 RESUME_FILE = "resume.json"
@@ -43,11 +45,14 @@ def load_resume_file(resume_path):
     with open(resume_path) as f:
         return json.load(f)
 
-def update_resume_file(resume_data, resume_path):
-    with open(resume_path, "w") as f:
-        json.dump(resume_data, f, indent=2)
-
 def main():
+    about = "Spotify to YouTube playlist converter and web page creator."
+
+    parser = argparse.ArgumentParser(
+            description = about,
+            epilog="See https://github.com/mcguirepr89/spotimy.git for more information")
+    parser.parse_args()
+
     if os.path.exists(RESUME_FILE):
         print(f"\nFound existing {RESUME_FILE}. Resuming...")
         resume_data = load_resume_file(RESUME_FILE)
@@ -60,16 +65,16 @@ def main():
         save_resume_file(tracks, playlist_name, RESUME_FILE)
         resume_data = load_resume_file(RESUME_FILE)
 
-    yt_api = YoutubeAPI()
+    yt_api = yt.YoutubeAPI()
     
     if not resume_data["youtube_playlist_id"]:
-        youtube_playlist_id = choose_or_create_youtube_playlist(yt_api, resume_data["playlist_name"])
+        youtube_playlist_id = yt_api.choose_or_create_youtube_playlist(resume_data["playlist_name"])
         resume_data["youtube_playlist_id"] = youtube_playlist_id
         update_resume_file(resume_data, RESUME_FILE)
     else:
         youtube_playlist_id = resume_data["youtube_playlist_id"]
 
-    add_tracks_to_youtube_playlist(resume_data, yt_api, youtube_playlist_id, RESUME_FILE)
+    yt_api.add_tracks_to_youtube_playlist(resume_data, youtube_playlist_id, RESUME_FILE)
 
     print("\n🎵 All tracks processed. Generating YouTube links page...")
 

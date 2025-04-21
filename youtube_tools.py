@@ -75,60 +75,64 @@ class YoutubeAPI:
             print(f"Error adding video: {e}")
             return False
 
-def choose_or_create_youtube_playlist(yt_api, default_name):
-    playlists = yt_api.youtube.playlists().list(
-        part="snippet",
-        mine=True,
-        maxResults=50
-    ).execute()
-
-    print("\nYour YouTube Playlists:")
-    existing_playlists = {}
-    for idx, item in enumerate(playlists.get("items", [])):
-        title = item["snippet"]["title"]
-        pid = item["id"]
-        existing_playlists[idx + 1] = (title, pid)
-        print(f"{idx + 1}: {title}")
-
-    choice = input("\nSelect a playlist number, or press Enter to create a new one: ")
-
-    if choice.strip() == "":
-        name = input(f"Enter a new playlist name (default: {default_name}): ").strip()
-        if not name:
-            name = default_name
-
-        visibility = input("Visibility (public/private/unlisted)? [private]: ").strip().lower()
-        if visibility not in ["public", "unlisted"]:
-            visibility = "private"
-
-        playlist = yt_api.youtube.playlists().insert(
-            part="snippet,status",
-            body={
-                "snippet": {"title": name},
-                "status": {"privacyStatus": visibility}
-            }
+    def choose_or_create_youtube_playlist(self, default_name):
+        playlists = self.youtube.playlists().list(
+            part="snippet",
+            mine=True,
+            maxResults=50
         ).execute()
-
-        return playlist["id"]
-    else:
-        selected_idx = int(choice)
-        return existing_playlists[selected_idx][1]
-
-def add_tracks_to_youtube_playlist(resume_data, yt_api, youtube_playlist_id, resume_path):
-    tracks = resume_data["tracks"]
-
-    for idx, track_entry in enumerate(tracks):
-        if track_entry["added"]:
-            continue  # already added previously
-
-        query = track_entry["track_info"]
-        print(f"\nSearching and adding: {query}")
-
-        success = yt_api.search_and_add_video(query, youtube_playlist_id)
-
-        if success:
-            print(f"✔ Added: {query}")
-            resume_data["tracks"][idx]["added"] = True
-            update_resume_file(resume_data, resume_path)
+    
+        print("\nYour YouTube Playlists:")
+        existing_playlists = {}
+        for idx, item in enumerate(playlists.get("items", [])):
+            title = item["snippet"]["title"]
+            pid = item["id"]
+            existing_playlists[idx + 1] = (title, pid)
+            print(f"{idx + 1}: {title}")
+    
+        choice = input("\nSelect a playlist number, or press Enter to create a new one: ")
+    
+        if choice.strip() == "":
+            name = input(f"Enter a new playlist name (default: {default_name}): ").strip()
+            if not name:
+                name = default_name
+    
+            visibility = input("Visibility (public/private/unlisted)? [private]: ").strip().lower()
+            if visibility not in ["public", "unlisted"]:
+                visibility = "private"
+    
+            playlist = self.youtube.playlists().insert(
+                part="snippet,status",
+                body={
+                    "snippet": {"title": name},
+                    "status": {"privacyStatus": visibility}
+                }
+            ).execute()
+    
+            return playlist["id"]
         else:
-            print(f"✖ Failed: {query}")
+            selected_idx = int(choice)
+            return existing_playlists[selected_idx][1]
+
+    def add_tracks_to_youtube_playlist(self, resume_data, youtube_playlist_id, resume_path):
+        tracks = resume_data["tracks"]
+    
+        for idx, track_entry in enumerate(tracks):
+            if track_entry["added"]:
+                continue  # already added previously
+    
+            query = track_entry["track_info"]
+            print(f"\nSearching and adding: {query}")
+    
+            success = self.search_and_add_video(query, youtube_playlist_id)
+    
+            if success:
+                print(f"✔ Added: {query}")
+                resume_data["tracks"][idx]["added"] = True
+                update_resume_file(resume_data, resume_path)
+            else:
+                print(f"✖ Failed: {query}")
+
+def update_resume_file(resume_data, resume_path):
+    with open(resume_path, "w") as f:
+        json.dump(resume_data, f, indent=2)
