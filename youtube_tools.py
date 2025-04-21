@@ -1,10 +1,10 @@
 import os
+import json
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
 import googleapiclient.errors
-from google.oauth2.credentials import Credentials
 import google.auth.transport.requests
-import json
+from google.oauth2.credentials import Credentials
 
 class YoutubeAPI:
     def __init__(self):
@@ -15,14 +15,10 @@ class YoutubeAPI:
         self.youtube = self.authenticate_youtube()
 
     def authenticate_youtube(self):
-        os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
         creds = None
-
-        # Check if token.json already exists
         if os.path.exists('token.json'):
-            creds = google.oauth2.credentials.Credentials.from_authorized_user_file('token.json', self.scopes)
+            creds = Credentials.from_authorized_user_file('token.json', self.scopes)
 
-        # If there are no (valid) credentials, let the user log in
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(google.auth.transport.requests.Request())
@@ -32,7 +28,6 @@ class YoutubeAPI:
                 )
                 creds = flow.run_local_server(port=0)
 
-            # Save the credentials for the next run
             with open('token.json', 'w') as token:
                 token.write(creds.to_json())
 
@@ -81,26 +76,22 @@ class YoutubeAPI:
             mine=True,
             maxResults=50
         ).execute()
-    
+
+        existing_playlists = {idx + 1: (item["snippet"]["title"], item["id"]) 
+                              for idx, item in enumerate(playlists.get("items", []))}
+
         print("\nYour YouTube Playlists:")
-        existing_playlists = {}
-        for idx, item in enumerate(playlists.get("items", [])):
-            title = item["snippet"]["title"]
-            pid = item["id"]
-            existing_playlists[idx + 1] = (title, pid)
-            print(f"{idx + 1}: {title}")
-    
+        for idx, (title, _) in existing_playlists.items():
+            print(f"{idx}: {title}")
+
         choice = input("\nSelect a playlist number, or press Enter to create a new one: ")
-    
+
         if choice.strip() == "":
-            name = input(f"Enter a new playlist name (default: {default_name}): ").strip()
-            if not name:
-                name = default_name
-    
+            name = input(f"Enter a new playlist name (default: {default_name}): ").strip() or default_name
             visibility = input("Visibility (public/private/unlisted)? [private]: ").strip().lower()
             if visibility not in ["public", "unlisted"]:
                 visibility = "private"
-    
+
             playlist = self.youtube.playlists().insert(
                 part="snippet,status",
                 body={
@@ -108,31 +99,40 @@ class YoutubeAPI:
                     "status": {"privacyStatus": visibility}
                 }
             ).execute()
-    
+
             return playlist["id"]
         else:
-            selected_idx = int(choice)
-            return existing_playlists[selected_idx][1]
+            try:
+                selected_idx = int(choice)
+                return existing_playlists[selected_idx][1]
+            except (ValueError, KeyError):
+                print("❗ Invalid choice. Exiting.")
+                exit(1)
 
     def add_tracks_to_youtube_playlist(self, resume_data, youtube_playlist_id, resume_path):
-        tracks = resume_data["tracks"]
-    
-        for idx, track_entry in enumerate(tracks):
+        for idx, track_entry in enumerate(resume_data["tracks"]):
             if track_entry["added"]:
-                continue  # already added previously
-    
+                continue
+
             query = track_entry["track_info"]
             print(f"\nSearching and adding: {query}")
-    
+
             success = self.search_and_add_video(query, youtube_playlist_id)
-    
+
             if success:
                 print(f"✔ Added: {query}")
                 resume_data["tracks"][idx]["added"] = True
-                update_resume_file(resume_data, resume_path)
+                import utils
+                utils.update_resume_file(resume_data, resume_path)
             else:
                 print(f"✖ Failed: {query}")
 
-def update_resume_file(resume_data, resume_path):
-    with open(resume_path, "w") as f:
-        json.dump(resume_data, f, indent=2)
+    def get_youtube_playlist_name(self, playlist_id):
+        playlist = self.youtube.playlists().list(
+            part="snippet",
+            id=playlist_id
+        ).execute()
+        items = playlist.get("items", [])
+        if items:
+            return items[0]["snippet"]["title"]
+        return "YouTubePlaylist"
