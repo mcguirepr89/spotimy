@@ -85,6 +85,11 @@ OR resume from a previous conversion (see [Limitations](https://github.com/mcgui
 python spotimy.py --resume Spotify_playlist-to-Youtube_playlist.json
 ```
 
+AND you can add tracks from a tracklist to a new or existing Spotify playlist (see [Hints](https://github.com/mcguirepr89/spotimy/blob/main/README.md#hints) below for tips on using this feature):
+```bash
+python spotimy.py --spotify-add ListOfSpotifyTrackIDs_OR_song_links.txt
+```
+
 ---
 
 ## Technologies Used 🛠
