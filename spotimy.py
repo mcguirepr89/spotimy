@@ -16,7 +16,9 @@ def main():
     )
     parser.add_argument("--resume", help="Path to a resume JSON file to continue a previous session.")
     parser.add_argument("--generate-html", action="store_true", help="Generate an HTML page with links and optional embed.")
+    parser.add_argument("--spotify-add", help="Path to file containing Spotify track IDs for adding to Spotify playlist.")
     args = parser.parse_args()
+
 
     if args.resume:
         if not os.path.exists(args.resume):
@@ -28,7 +30,17 @@ def main():
     else:
         sp = st.SpotifyAPI()
         playlists = sp.fetch_spotify_playlists()
-        playlist_name, playlist_id, spotify_playlist_url = sp.choose_spotify_playlist(playlists)
+        playlist_name, playlist_id, spotify_playlist_url = sp.choose_spotify_playlist(playlists, args)
+        if args.spotify_add:
+            if not os.path.exists(args.spotify_add):
+                print(f"❌ Track IDs file {args.spotify_add} not found.")
+                return
+            track_ids = utils.read_track_ids_from_file(args.spotify_add)
+            if not confirm(f"\nAdd {len(track_ids)} track(s) to playlist '{playlist_name}'? (y/n): "):
+                print("Aborted. Exiting.")
+                return
+            sp.spotify.playlist_add_items(playlist_id, track_ids)
+            print(f"✅ Added {len(track_ids)} tracks to playlist '{playlist_name}'.")
 
         tracks = sp.fetch_tracks_from_playlist(playlist_id)
 

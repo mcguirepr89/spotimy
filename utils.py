@@ -1,4 +1,5 @@
 import json
+import re
 
 def sanitize_filename(name):
     """Make filenames safe for saving."""
@@ -22,3 +23,18 @@ def load_json(path):
 def update_resume_file(resume_data, resume_path):
     with open(resume_path, "w") as f:
         json.dump(resume_data, f, indent=2)
+
+def read_track_ids_from_file(filepath):
+    track_ids = []
+    pattern = re.compile(r"(?:spotify:track:|https://open\.spotify\.com/track/)?([A-Za-z0-9]{22})")
+
+    with open(filepath, "r") as f:
+        for line in f:
+            line = line.strip()
+            match = pattern.search(line)
+            if match:
+                track_ids.append(match.group(1))  # Extract the base62 ID
+            else:
+                print(f"⚠️ Skipping invalid line: {line}")
+
+    return track_ids
