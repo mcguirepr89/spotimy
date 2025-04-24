@@ -22,7 +22,13 @@ Built with **Spotipy**, **Google API**, **TailwindCSS**, and lots of love. ❤�
 
 ## Screenshots 📸
 
-Will add screenshots soon
+<table>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/c9b3b0c0-3b83-42d9-a7e6-d0e2e7b80dac" alt="Screenshot 1" width="100%"></td>
+    <td><img src="https://github.com/user-attachments/assets/691f9138-6d61-4651-9dc4-262b118d88ab" alt="Screenshot 2" width="100%"></td>
+  </tr>
+</table>
+
 
 ---
 
