@@ -66,6 +66,18 @@ Will add screenshots soon
 ---
 
 ## Usage 🚀
+```
+usage: spotimy.py [-h] [--resume RESUME] [--generate-html] [--spotify-add SPOTIFY_ADD]
+
+Spotify to YouTube playlist converter and web page creator.
+
+options:
+  -h, --help            show this help message and exit
+  --resume RESUME       Path to a resume JSON file to continue a previous session.
+  --generate-html       Generate an HTML page with links and optional embed.
+  --spotify-add SPOTIFY_ADD
+                        Path to file containing Spotify track IDs for adding to Spotify playlist.
+```
 
 Run the script interactively:
 
