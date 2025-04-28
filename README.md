@@ -22,6 +22,7 @@ Built with **Spotipy**, **Google API**, **TailwindCSS**, and lots of love. ❤�
 
 ## Screenshots 📸
 
+See my example Spotimy page [here](https://playlist.pmcgui.xyz)
 <table>
   <tr>
     <td><img src="https://github.com/user-attachments/assets/c9b3b0c0-3b83-42d9-a7e6-d0e2e7b80dac" alt="Screenshot 1" width="100%"></td>
